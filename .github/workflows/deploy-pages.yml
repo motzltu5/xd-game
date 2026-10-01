@@ -46,13 +46,15 @@ jobs:
         run: |
           GODOT_BIN="$HOME/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64"
           chmod +x "$GODOT_BIN"
-          "$GODOT_BIN" --headless --editor --path . --import
+          "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee /tmp/godot-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Cannot open file|Failed loading resource' /tmp/godot-import.log; then exit 1; fi
       - name: Export browser game
         run: |
           GODOT_BIN="$HOME/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64"
           rm -rf web
           mkdir -p web site
-          "$GODOT_BIN" --headless --path . --export-release Web web/index.html
+          "$GODOT_BIN" --headless --path . --export-release Web web/index.html 2>&1 | tee /tmp/godot-export.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Cannot open file|Failed loading resource' /tmp/godot-export.log; then exit 1; fi
           cp -a web/. site/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
