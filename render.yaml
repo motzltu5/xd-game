@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: counter-ops-match-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    plan: free

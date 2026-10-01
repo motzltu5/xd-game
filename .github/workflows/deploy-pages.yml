@@ -25,10 +25,35 @@ jobs:
         uses: actions/checkout@v6
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Unpack the Godot web export
+      - name: Cache Godot 4.7.2 and web export templates
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot-4.7.2
+            ~/.local/share/godot/export_templates/4.7.2.stable
+          key: godot-4.7.2-web-export-v1
+      - name: Install Godot 4.7.2 web exporter
+        if: steps.godot-cache.outputs.cache-hit != 'true'
         run: |
-          mkdir site
-          unzip -q web_upload.zip -d site
+          mkdir -p "$HOME/godot-4.7.2" "$HOME/.local/share/godot/export_templates/4.7.2.stable" /tmp/godot-templates
+          curl -fsSL 'https://downloads.godotengine.org/?flavor=stable&platform=linux.64&slug=linux.x86_64.zip&version=4.7.2' -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d "$HOME/godot-4.7.2"
+          curl -fsSL 'https://downloads.godotengine.org/?flavor=stable&platform=templates&slug=export_templates.tpz&version=4.7.2' -o /tmp/godot-templates.tpz
+          unzip -q /tmp/godot-templates.tpz -d /tmp/godot-templates
+          cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/4.7.2.stable/"
+      - name: Import project assets
+        run: |
+          GODOT_BIN="$HOME/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64"
+          chmod +x "$GODOT_BIN"
+          "$GODOT_BIN" --headless --editor --path . --import
+      - name: Export browser game
+        run: |
+          GODOT_BIN="$HOME/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64"
+          rm -rf web
+          mkdir -p web site
+          "$GODOT_BIN" --headless --path . --export-release Web web/index.html
+          cp -a web/. site/
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:

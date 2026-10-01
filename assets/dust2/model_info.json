@@ -1,0 +1,24 @@
+{
+  "source": "C:\\Users\\motzl\\Downloads\\3d-model.3ds.zip",
+  "entry": "3d-model.3ds",
+  "mesh_objects": 192,
+  "vertices": 19759,
+  "faces": 11974,
+  "scale": 0.06,
+  "mesh_local_matrices_applied": true,
+  "bounds": {
+    "min": [
+      -134.06408203125,
+      0.0,
+      -148.88203857421877
+    ],
+    "max": [
+      134.06408203125,
+      47.27401611328125,
+      148.88203857421877
+    ]
+  },
+  "source_materials": 39,
+  "grounded_components": [],
+  "floating_components_corrected": []
+}
