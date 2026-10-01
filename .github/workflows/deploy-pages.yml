@@ -48,6 +48,11 @@ jobs:
           chmod +x "$GODOT_BIN"
           "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee /tmp/godot-import.log
           if grep -E 'SCRIPT ERROR:|Parse Error:|Cannot open file|Failed loading resource' /tmp/godot-import.log; then exit 1; fi
+      - name: Launch project scene headlessly
+        run: |
+          GODOT_BIN="$HOME/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64"
+          "$GODOT_BIN" --headless --path . --quit-after 3 2>&1 | tee /tmp/godot-startup.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Cannot open file|Failed loading resource|ERROR:' /tmp/godot-startup.log; then exit 1; fi
       - name: Export browser game
         run: |
           GODOT_BIN="$HOME/godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64"
